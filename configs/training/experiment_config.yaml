@@ -1,0 +1,16 @@
+batch_size: 64
+carla_port: 2000
+clip_range: 0.2
+gae_lambda: 0.95
+gamma: 0.99
+learning_rate: 0.0003
+max_episode_steps: 1000
+n_epochs: 10
+n_steps: 2048
+num_vehicles: 5
+pedestrian_count: 0
+tensorboard_logging: true
+town: Town03
+traffic_density: 0.2
+use_gpu: true
+weather: ClearNoon

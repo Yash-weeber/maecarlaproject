@@ -1,0 +1,55 @@
+# RTX 4070 Ti Super Optimization Settings
+gpu_optimization:
+  device: "cuda"
+  memory_optimization: true
+  batch_size_scaling: true
+  mixed_precision: true
+
+carla_settings:
+  # Optimized for RTX 4070 Ti Super (16GB VRAM)
+  quality_level: "Medium"  # Balance quality vs performance
+  world_port: 2000
+  streaming_port: 2001
+  rpc_port: 2000
+
+  # Performance settings
+  no_rendering_mode: false
+  synchronous_mode: true
+  fixed_delta_seconds: 0.1  # 20 FPS
+
+  # Memory optimization
+  max_substep_delta_time: 0.01
+  max_substeps: 10
+
+  # Graphics optimization for 4070 Ti Super
+  graphics_settings:
+    resolution: [1920, 1080]
+    windowed: true
+    vsync: false
+    max_fps: 60
+
+vehicle_scaling:
+  # Progressive scaling based on available resources
+  phase_1: 5   # Initial training
+  phase_2: 10  # Medium complexity
+  phase_3: 15  # Advanced scenarios
+  phase_4: 20  # Full fleet simulation
+
+memory_management:
+  # 64GB RAM optimization
+  parallel_environments: 4
+  buffer_size: 100000
+  cleanup_frequency: 1000
+  garbage_collection: true
+
+training_optimization:
+  # Optimized for 15 epochs as requested
+  n_epochs: 15
+  batch_size: 512  # Leverage 64GB RAM
+  n_steps: 4096   # Larger rollout buffer
+  learning_rate: 3e-2
+
+monitoring:
+  gpu_memory_tracking: true
+  system_memory_tracking: true
+  performance_logging: true

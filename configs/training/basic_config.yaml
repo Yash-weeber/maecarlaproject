@@ -1,0 +1,65 @@
+## Basic training configuration for 5-vehicle scenario
+#num_vehicles: 5
+#town: 'Town03'
+#carla_port: 2000
+#
+## Training parameters - adjusted for single environment
+#total_timesteps: 1000000
+#learning_rate: 3e-4
+#batch_size: 64      # Reduced from 256 for single environment
+#n_epochs: 15
+#
+## Environment settings
+#synchronous_mode: true
+#fixed_delta_seconds: 0.05
+#weather: 'ClearNoon'
+#
+## Evaluation
+#eval_frequency: 50000
+#eval_episodes: 5
+#
+## Hardware optimization for RTX 4070 Ti Super - single environment
+#parallel_envs: 1      # Changed from 4 to 1
+#use_gpu: true
+#tensorboard_logging: true
+
+
+
+
+
+# Basic configuration for Waymo-style training
+num_vehicles: 3
+town: "Town03"
+parallel_envs: 4
+max_steps: 5000
+
+# Training parameters
+learning_rate: 3e-4
+n_steps: 1000000
+batch_size: 64
+n_epochs: 10
+gamma: 0.99
+gae_lambda: 0.95
+clip_range: 0.2
+
+# Environment settings
+use_synchronous_mode: true
+carla_port: 2000
+fixed_delta_seconds: 0.1
+
+# Reward weights
+reward_weights:
+  speed: 0.2
+  lane_keeping: 0.15
+  collision_avoidance: 0.3
+  traffic_compliance: 0.15
+  waypoint_progress: 0.2
+
+# Model settings
+policy_kwargs:
+  net_arch: [64, 64]
+  activation_fn: "tanh"
+
+# Evaluation
+eval_freq: 10000
+n_eval_episodes: 5

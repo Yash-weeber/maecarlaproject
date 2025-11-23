@@ -1,0 +1,8 @@
+off render screeen
+
+
+
+/home/flash/UnrealEngine_4.26/Engine/Binaries/Linux/UE4Editor "/home/flash/carla/Unreal/CarlaUE4/CarlaUE4.uproject" -game -server -RenderOffScreen -carla-rpc-port=2000
+
+
+python3 integration_script.py --timesteps 10000000
