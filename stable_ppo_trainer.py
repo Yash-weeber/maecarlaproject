@@ -495,8 +495,9 @@ class StableMultiAgentTrainer:
         self.model = PPO(
             policy_type,
             self.training_env,
-            learning_rate=self.config.get("learning_rate", 3e-4),
-            n_steps=self.config.get("n_steps", 512),
+            # learning_rate=self.config.get("learning_rate", 3e-4),
+            learning_rate=self.config.get("learning_rate", 1e-4),
+            n_steps=self.config.get("n_steps", 4096),  #512 to 4096
             batch_size=self.config.get("batch_size", 64),
             n_epochs=self.config.get("n_epochs", 10),
             gamma=self.config.get("gamma", 0.99),

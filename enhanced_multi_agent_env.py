@@ -1636,8 +1636,8 @@ ALIVE_REWARD = 0.05              # small positive "alive" reward each step
 SPEED_REWARD_SCALE = 0.05        # positive for moving, bounded
 
 # Collision penalties
-P_COLLISION_EGO = -1.0
-P_COLLISION_STATIC = -0.2
+P_COLLISION_EGO = -1000.0
+P_COLLISION_STATIC = -50
 
 # Spacing balance
 P_SPACING_REWARD = 0.10
@@ -1656,7 +1656,9 @@ SAFE_FOLLOWING_DIST = 10.0
 MAX_SPEED_MPS = 10.0
 MAX_DECELERATION = 8.0
 REACTION_TIME = 0.5
-
+THEORETICAL_SAFE_DISTANCE = 5.0  # From your proofs
+MAX_PROXIMITY_PENALTY = -200.0   # Cap for the proactive penalty
+REWARD_COORDINATION_BONUS = 20.0 # Reward for resolving conflicts
 # Spawn safety
 MIN_SPAWN_SEPARATION = 20.0      # meters
 
@@ -1927,6 +1929,7 @@ class StableMultiAgentCarlaEnv(gym.Env):
         obs = self._get_observations()
         reward = self._calculate_rewards(current_actions, stuck_penalties)
         fleet_stats = self.fleet_coordinator.get_coordination_statistics()
+        reward += fleet_stats.get('recent_conflicts', 0) * REWARD_COORDINATION_BONUS
 
         # termination logic (only real safety)
         terminated = False
@@ -2146,10 +2149,18 @@ class StableMultiAgentCarlaEnv(gym.Env):
             ndata = self._vehicle_neighbor_cache.get(vid)
             if ndata:
                 nnd = ndata["nnd"]
-                if nnd > SAFE_FOLLOWING_DIST:
+                if nnd < THEORETICAL_SAFE_DISTANCE:
+                    # Exponential penalty as distance -> 0
+                    # Formula: - (Target / Actual) * Scaling
+                    # Example: at 2.5m (half safe dist), penalty is -40.0
+                    proximity_penalty = -(THEORETICAL_SAFE_DISTANCE / (nnd + 1e-6)) * 20.0
+                    r_spacing = float(np.clip(proximity_penalty, MAX_PROXIMITY_PENALTY, -0.5))
+                elif nnd > SAFE_FOLLOWING_DIST:
                     r_spacing = P_SPACING_REWARD
-                elif nnd < CRITICAL_PROXIMITY_THRESHOLD + 2.0:
-                    r_spacing = P_TAILGATING_PENALTY
+                # if nnd > SAFE_FOLLOWING_DIST:
+                #     r_spacing = P_SPACING_REWARD
+                # elif nnd < CRITICAL_PROXIMITY_THRESHOLD + 2.0:
+                #     r_spacing = P_TAILGATING_PENALTY
 
             r_col = 0.0
             if self.collision_histories.get(vid):
